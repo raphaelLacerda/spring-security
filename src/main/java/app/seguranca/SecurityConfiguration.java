@@ -1,12 +1,16 @@
 package app.seguranca;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,13 +36,29 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .anonymous();
 
 
-        //deveria permitir anonimo para todas, ate quem precisa estar autenticado
+        //deveria permitir anonimo para todas somente OPTIONS
+        //nao funfou
 
-                http.authorizeRequests()
+//        http.authorizeRequests()
+//                .antMatchers(HttpMethod.OPTIONS, "/**")
+//                .anonymous();
+
+
+        //With this config, we will authorize all users (both anonymous and logged in) to access the page starting with ‘/’ (for example, our homepage).
+        //nao funciona com PreAuthorize
+
+        http.authorizeRequests()
                 .antMatchers("/**")
-                .anonymous();
-
+                .anonymous()
+                .antMatchers("/**")
+                .permitAll();
 
 
     }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("user").password("1").roles("admin");
+    }
+
 }

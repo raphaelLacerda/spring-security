@@ -20,11 +20,17 @@ public class Example {
         return "teste!";
     }
 
+    @PreAuthorize("isAnonymous()")
     @RequestMapping("/anonimo")
     String anonimo() {
         return "anonimo";
     }
 
+
+    /**
+     * https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html
+     * @return
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping("/logado")
     String logado() {
